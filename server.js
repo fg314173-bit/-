@@ -89,7 +89,6 @@ const server = http.createServer(async (req, res) => {
   }
 
   try {
-  try {
     // ---- config (menu/locations/slots for the frontend) ----
     if (pathname === "/api/config" && method === "GET") {
       return sendJson(res, 200, { locations: LOCATIONS, menu: MENU, slots: SLOTS });
