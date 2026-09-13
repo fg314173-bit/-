@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bite&Go</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAFAF8;
+    --paper-dim:#F1F0EC;
+    --surface:#FFFFFF;
+    --ink:#14213D;
+    --ink-soft:#5C6883;
+    --brand:#F2691E;
+    --brand-dark:#D2560F;
+    --coral:#E14B3F;
+    --sage:#1FA971;
+    --line:#E7E4DC;
+    --hot:#E2703A;
+    --cold:#3E8FD1;
+    --nav-h:60px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  .app{
+    max-width:480px;
+    margin:0 auto;
+    min-height:100vh;
+    background:var(--bg);
+    position:relative;
+  }
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    padding:16px 20px 14px;
+    background:var(--bg);
+    position:sticky;
+    top:0;
+    z-index:30;
+  }
+  .topbar-row{display:flex;align-items:center;justify-content:space-between;}
+  .brand{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:21px;
+    letter-spacing:-0.01em;
+    margin:0;
+  }
+  .brand .go{color:var(--brand);}
+  .staff-tag{
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:11px;
+    color:var(--ink-soft);
+    background:var(--paper-dim);
+    padding:3px 8px;
+    border-radius:6px;
+    margin-left:6px;
+    vertical-align:2px;
+  }
+  .icon-btn{
+    width:36px;height:36px;
+    border-radius:10px;
+    border:1px solid var(--line);
+    background:var(--surface);
+    font-size:15px;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    color:var(--ink);
+  }
+  .dropdown-menu{
+    position:absolute;
+    right:20px;
+    top:60px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:12px;
+    box-shadow:0 10px 28px rgba(20,33,61,0.14);
+    overflow:hidden;
+    z-index:40;
+  }
+  .dropdown-menu button{
+    display:block;
+    width:100%;
+    text-align:left;
+    padding:13px 16px;
+    border:none;
+    background:none;
+    font-family:'Inter',sans-serif;
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--ink);
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .dropdown-menu button:hover{background:var(--paper-dim);}
+
+  /* ---------- Screen / content ---------- */
+  .screen{
+    padding:4px 20px 20px;
+  }
+  .nav-spacer{height:78px;}
+
+  /* Hero */
+  .hero{
+    margin:6px 0 20px;
+  }
+  .hero h1{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:25px;
+    font-weight:700;
+    line-height:1.18;
+    margin:0 0 12px;
+  }
+  .hero-chips{display:flex;gap:8px;flex-wrap:wrap;}
+  .hero-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--ink-soft);
+    background:var(--surface);
+    border:1px solid var(--line);
+    padding:7px 11px;
+    border-radius:20px;
+  }
+  .location-pill-select{
+    appearance:none;
+    border:none;
+    background:transparent;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    max-width:190px;
+    text-overflow:ellipsis;
+  }
+
+  h2.section-title{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:16px;
+    font-weight:600;
+    margin:0 0 12px;
+  }
+  .back-link{
+    background:none;border:none;
+    color:var(--ink-soft);
+    font-size:13px;
+    font-weight:600;
+    padding:6px 0 14px;
+    cursor:pointer;
+    display:flex;align-items:center;gap:4px;
+  }
+
+  /* Menu cards */
+  .menu-grid{display:flex;flex-direction:column;gap:12px;}
+  .menu-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:16px;
+    overflow:hidden;
+  }
+  .menu-card-photo{
+    position:relative;
+    width:100%;
+    height:112px;
+    background:var(--paper-dim);
+  }
+  .menu-card-photo img{
+    width:100%;height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .menu-card-photo-fallback{
+    position:absolute;inset:0;
+    display:flex;align-items:center;justify-content:center;
+    font-size:10px;font-weight:700;letter-spacing:0.04em;
+    color:var(--ink-soft);
+  }
+  .menu-card-body{
+    padding:12px 14px 14px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .menu-card-name{font-size:15px;font-weight:700;margin:0 0 2px;}
+  .menu-card-desc{font-size:12px;color:var(--ink-soft);margin:0 0 6px;}
+  .menu-card-price{font-size:14px;font-weight:600;color:var(--ink);}
+  .qty-control{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+  .qty-btn{
+    width:32px;height:32px;
+    border-radius:50%;
+    border:1px solid var(--line);
+    background:var(--surface);
+    font-size:16px;font-weight:700;color:var(--ink);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;line-height:1;
+  }
+  .qty-btn.add{background:var(--brand);color:#fff;border-color:var(--brand);}
+  .qty-num{min-width:14px;text-align:center;font-weight:700;font-size:14px;}
+
+  /* Sticky cart bar */
+  .cart-bar{
+    position:sticky;
+    bottom:var(--nav-h);
+    left:0;right:0;
+    max-width:480px;
+    margin:14px auto 0;
+    background:var(--ink);
+    color:#fff;
+    padding:14px 18px;
+    display:flex;align-items:center;justify-content:space-between;
+    cursor:pointer;
+    border-radius:13px;
+    box-shadow:0 8px 22px rgba(20,33,61,0.22);
+  }
+  .cart-bar.hidden{display:none;}
+  .cart-bar-left{font-size:12.5px;color:#B9C2D6;}
+  .cart-bar-right{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15.5px;color:var(--brand);}
+
+  /* Buttons */
+  .btn-primary{
+    width:100%;padding:15px;border:none;border-radius:12px;
+    background:var(--brand);color:#fff;
+    font-family:'Inter',sans-serif;font-weight:700;font-size:15px;
+    cursor:pointer;transition:background .15s ease, transform .1s ease;
+  }
+  .btn-primary:active{transform:scale(0.985);}
+  .btn-primary:hover{background:var(--brand-dark);}
+  .btn-primary:disabled{background:var(--line);color:var(--ink-soft);cursor:not-allowed;}
+  .btn-secondary{
+    width:100%;padding:13px;border:1px solid var(--line);border-radius:12px;
+    background:transparent;color:var(--ink);
+    font-family:'Inter',sans-serif;font-weight:600;font-size:13.5px;
+    cursor:pointer;margin-top:10px;
+  }
+  .btn-text{
+    display:block;width:100%;text-align:center;
+    background:none;border:none;
+    color:var(--ink-soft);font-size:12.5px;font-weight:600;
+    padding:12px 0 0;cursor:pointer;text-decoration:underline;
+  }
+
+  /* Slot pills */
+  .slot-list{display:flex;flex-direction:column;gap:10px;margin-bottom:22px;}
+  .slot-pill{
+    border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;
+    display:flex;justify-content:space-between;align-items:center;
+    cursor:pointer;background:var(--surface);
+  }
+  .slot-pill.selected{border-color:var(--ink);background:var(--paper-dim);}
+  .slot-time{font-weight:700;font-size:15px;}
+  .slot-note{font-size:12px;color:var(--ink-soft);}
+  .radio-dot{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--line);flex-shrink:0;position:relative;}
+  .slot-pill.selected .radio-dot{border-color:var(--ink);}
+  .slot-pill.selected .radio-dot::after{content:'';position:absolute;inset:3px;border-radius:50%;background:var(--ink);}
+
+  .review-row{display:flex;justify-content:space-between;padding:9px 0;font-size:14px;}
+  .review-row.total{border-top:1px solid var(--line);margin-top:6px;padding-top:14px;font-weight:700;font-size:16px;font-family:'Space Grotesk',sans-serif;}
+
+  .center-screen{display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:60px;}
+  .spinner{width:44px;height:44px;border:3px solid var(--line);border-top-color:var(--brand);border-radius:50%;animation:spin .9s linear infinite;margin-bottom:20px;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* ---------- Bottom nav (student only) ---------- */
+  .bottom-nav{
+    position:fixed;left:50%;transform:translateX(-50%);
+    bottom:0;width:100%;max-width:480px;height:var(--nav-h);
+    background:var(--surface);border-top:1px solid var(--line);
+    display:flex;z-index:30;
+  }
+  .bottom-nav button{
+    flex:1;border:none;background:none;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+    font-family:'Inter',sans-serif;font-size:10.5px;font-weight:600;
+    color:var(--ink-soft);position:relative;
+  }
+  .bottom-nav button.active{color:var(--brand);}
+  .bottom-nav .nav-icon{font-size:19px;}
+  .nav-dot{
+    position:absolute;top:6px;right:calc(50% - 16px);
+    width:7px;height:7px;border-radius:50%;background:var(--coral);
+  }
+
+  /* ---------- Tickets tab ---------- */
+  .empty-state{text-align:center;padding:70px 20px;color:var(--ink-soft);font-size:14px;}
+  .empty-state .big{font-family:'Space Grotesk',sans-serif;font-size:16px;color:var(--ink);font-weight:600;margin-bottom:6px;}
+
+  .status-card{
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;
+    padding:16px;margin-bottom:16px;
+  }
+  .status-line{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;margin-bottom:10px;}
+  .status-line .dot{width:7px;height:7px;border-radius:50%;}
+  .status-order-id{font-family:'Space Grotesk',sans-serif;font-size:14px;color:var(--ink-soft);margin-bottom:12px;}
+  .prep-banner{
+    display:flex;justify-content:space-between;align-items:center;
+    background:var(--paper-dim);border-radius:10px;padding:12px 14px;
+    font-size:13.5px;font-weight:600;margin-bottom:4px;
+  }
+  .ticket-items{margin-top:10px;border-top:1px dashed var(--line);padding-top:10px;}
+  .ticket-item-row{display:flex;justify-content:space-between;font-size:13px;padding:3px 0;color:var(--ink-soft);}
+
+  /* Locker branded moment */
+  .locker-moment{text-align:center;margin:8px 0 18px;}
+  .locker-moment .box-icon{font-size:34px;margin-bottom:6px;}
+  .locker-wordmark{
+    font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;
+    letter-spacing:2.5px;color:var(--ink-soft);margin:0 0 10px;
+  }
+  .locker-headline{
+    font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;
+    color:var(--sage);margin:0 0 4px;
+  }
+  .locker-code{
+    font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:700;
+    letter-spacing:1px;margin:0;
+  }
+
+  .locker-panel{
+    background:var(--ink);
+    border-radius:18px;
+    padding:18px;
+    margin-bottom:16px;
+  }
+  .locker-panel-header{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-bottom:14px;
+  }
+  .locker-panel-title{
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12px;
+    color:#fff;letter-spacing:0.5px;
+  }
+  .locker-online{
+    display:inline-flex;align-items:center;gap:5px;
+    font-size:9.5px;font-weight:700;color:#4ADE9A;letter-spacing:0.5px;
+  }
+  .locker-online .pulse{width:6px;height:6px;border-radius:50%;background:#4ADE9A;}
+  .locker-zone-label{
+    font-size:10.5px;font-weight:700;letter-spacing:0.5px;
+    margin:10px 0 6px;
+  }
+  .locker-zone-label.hot{color:var(--hot);}
+  .locker-zone-label.cold{color:var(--cold);}
+  .locker-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+  .locker-cell{
+    height:44px;border-radius:8px;
+    border:1px solid rgba(255,255,255,0.14);
+    display:flex;align-items:center;justify-content:center;
+    color:rgba(255,255,255,0.45);font-weight:700;font-size:13px;
+  }
+  .locker-cell.active.hot{background:rgba(226,112,58,0.22);border-color:var(--hot);}
+  .locker-cell.active.cold{background:rgba(62,143,209,0.22);border-color:var(--cold);}
+  .locker-cell-dot{width:8px;height:8px;border-radius:50%;background:#4ADE9A;}
+
+  .locker-panel-center{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:34px 18px;text-align:center;}
+  .unlock-emoji{font-size:38px;margin-bottom:10px;}
+  .unlock-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;color:#fff;margin:0;}
+  .unlock-sub{font-size:12.5px;color:rgba(255,255,255,0.65);margin:6px 0 0;}
+
+  .qr-wrap{display:flex;justify-content:center;margin:16px 0 10px;}
+  .qr-grid{
+    display:grid;grid-template-columns:repeat(11,1fr);gap:2.4px;
+    width:150px;height:150px;padding:11px;background:var(--ink);border-radius:10px;
+  }
+  .qr-cell{background:#fff;border-radius:1px;}
+  .qr-cell.on{background:transparent;}
+  .qr-refresh-note{text-align:center;font-size:11.5px;color:var(--ink-soft);margin-bottom:16px;}
+
+  /* ---------- Staff ---------- */
+  .staff-session-bar{
+    display:flex;justify-content:space-between;align-items:center;
+    font-size:12.5px;font-weight:600;color:var(--ink-soft);
+    margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line);
+  }
+  .staff-session-bar button{background:none;border:none;color:var(--coral);font-weight:600;font-size:12.5px;cursor:pointer;padding:0;}
+
+  .stat-row{display:flex;gap:8px;margin-bottom:18px;}
+  .stat-box{
+    flex:1;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;
+    padding:11px 6px;text-align:center;cursor:pointer;
+  }
+  .stat-box.active-filter{border-color:var(--ink);background:var(--paper-dim);}
+  .stat-num{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:700;display:block;}
+  .stat-label{font-size:10px;color:var(--ink-soft);font-weight:600;margin-top:2px;}
+  .stat-box.new .stat-num{color:var(--coral);}
+  .stat-box.progress .stat-num{color:var(--brand);}
+  .stat-box.ready .stat-num{color:var(--sage);}
+
+  .staff-order-card{
+    background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--line);
+    border-radius:10px;padding:13px 15px;margin-bottom:9px;cursor:pointer;
+  }
+  .staff-order-card.new{border-left-color:var(--coral);}
+  .staff-order-card.progress{border-left-color:var(--brand);}
+  .staff-order-card.ready{border-left-color:var(--sage);}
+  .staff-order-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+  .staff-order-id{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;}
+  .staff-order-slot{font-size:11px;font-weight:700;color:var(--ink-soft);background:var(--paper-dim);padding:3px 8px;border-radius:6px;}
+  .staff-order-items{font-size:12.5px;color:var(--ink-soft);}
+  .staff-order-loc{font-size:11.5px;color:var(--ink-soft);margin-top:3px;}
+
+  .scan-input-wrap{display:flex;gap:8px;margin-bottom:22px;}
+  .scan-input-wrap input{
+    flex:1;padding:12px 14px;border:1px solid var(--line);border-radius:10px;
+    font-family:'Inter',sans-serif;font-size:14px;text-transform:uppercase;
+  }
+  .field-label{font-size:12px;color:var(--ink-soft);font-weight:600;margin:0 0 6px;}
+  .text-input{
+    width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:10px;
+    background:var(--surface);font-family:'Inter',sans-serif;font-size:15px;color:var(--ink);
+    margin-bottom:16px;
+  }
+
+  .fulfil-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;}
+  .fulfil-badge{display:inline-block;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:6px;margin-bottom:14px;letter-spacing:0.3px;}
+  .fulfil-badge.paid{color:var(--coral);background:#FBEAE7;}
+  .fulfil-badge.accepted{color:var(--brand-dark);background:#FCEBDF;}
+  .fulfil-badge.ready{color:var(--sage);background:#E4F6EE;}
+  .fulfil-badge.delivered{color:var(--ink-soft);background:var(--paper-dim);}
+
+  .prep-time-row{display:flex;gap:8px;margin-bottom:16px;}
+  .prep-time-btn{
+    flex:1;padding:11px 0;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);
+    font-family:'Inter',sans-serif;font-weight:600;font-size:13.5px;color:var(--ink);cursor:pointer;
+  }
+  .prep-time-btn.selected{border-color:var(--brand);background:#FCEBDF;color:var(--brand-dark);}
+
+  .toast{
+    position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+    background:var(--ink);color:#fff;padding:11px 18px;border-radius:10px;
+    font-size:13px;font-weight:600;z-index:100;box-shadow:0 6px 18px rgba(0,0,0,0.2);
+    opacity:0;transition:opacity .2s ease;pointer-events:none;
+  }
+  .toast.show{opacity:1;}
+
+  .storage-warning{
+    background:#FBEAE7;
+    color:var(--coral);
+    font-size:11.5px;
+    font-weight:600;
+    text-align:center;
+    padding:9px 16px;
+    line-height:1.4;
+  }
+
+  .more-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px;}
+  .more-card p{font-size:13.5px;color:var(--ink-soft);margin:0;line-height:1.55;}
+  .more-card h3{font-family:'Space Grotesk',sans-serif;font-size:14.5px;margin:0 0 6px;}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- Data ---------- */
+/* Menu/locations/slots now come from the server — single source of truth.
+   Populated by boot() before the first render(). */
+let LOCATIONS = [];
+let MENU = [];
+let SLOTS = [];
+const TRAYS = [1,2,3];
+
+const STATUS_META = {
+  paid:      { label: "Оплата подтверждена — ждём точку", dot: "var(--coral)" },
+  accepted:  { label: "Готовится", dot: "var(--brand)" },
+  ready:     { label: "В Locker — ждёт вас", dot: "var(--sage)" },
+  delivered: { label: "Заказ выдан", dot: "var(--ink-soft)" },
+};
+
+/* ---------- State ---------- */
+let state = {
+  role: "student",        // student | staff
+  tab: "order",            // order | tickets | more   (student bottom nav)
+  step: "menu",            // menu | slot | review | paying
+  menuOpen: false,
+  location: null,
+  cart: {},
+  slot: null,
+  currentOrder: null,
+  lockerOpening: false,
+  showStaffFallbackQr: false,
+
+  scanInput: "",
+  staffAuthLocation: null,
+  staffAuthName: null,
+  staffPinInput: "",
+  staffSelectedOrder: null,
+  staffPrepMinutes: 10,
+  staffZone: "hot",
+  staffTray: 1,
+  staffFilter: "all",
+};
+
+/* ---------- API client ---------- */
+/* Leave "" when the server serves this file itself (same-origin — e.g. local
+   `node server.js`, or Render serving /public directly). Set to your Render
+   URL (e.g. "https://bitego-backend.onrender.com") ONLY when this index.html
+   is hosted separately, like on GitHub Pages. No trailing slash. */
+const API_BASE = "";
+
+let serverOffline = false;
+
+async function apiFetch(path, opts){
+  let res;
+  try{
+    res = await fetch(API_BASE + path, opts);
+    if(serverOffline){ serverOffline = false; render(); }
+  }catch(e){
+    if(!serverOffline){ serverOffline = true; render(); }
+    throw new Error("Нет связи с сервером");
+  }
+  if(!res.ok){
+    let err = {};
+    try{ err = await res.json(); }catch(_){}
+    throw new Error(err.error || ("HTTP " + res.status));
+  }
+  if(res.status === 204) return null;
+  return res.json();
+}
+
+const api = {
+  config: () => apiFetch('/api/config'),
+  staffLogin: (code) => apiFetch('/api/staff/login', {
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({code})
+  }),
+  createOrder: (order) => apiFetch('/api/orders', {
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(order)
+  }),
+  listOrders: (location) => apiFetch('/api/orders' + (location ? ('?location=' + encodeURIComponent(location)) : '')),
+  getOrder: (id) => apiFetch('/api/orders/' + encodeURIComponent(id)),
+  acceptOrder: (id, minutes, staffName) => apiFetch(`/api/orders/${id}/accept`, {
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({minutes, staffName})
+  }),
+  loadIntoLocker: (id, zone, tray, staffName) => apiFetch(`/api/orders/${id}/load`, {
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({zone, tray, staffName})
+  }),
+  deliverOrder: (id, by) => apiFetch(`/api/orders/${id}/deliver`, {
+    method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({by})
+  }),
+};
+
+function showToast(msg, duration){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), duration || 1800);
+}
+
+/* ---------- QR simulation ---------- */
+function hashStr(str){
+  let h = 0;
+  for(let i=0;i<str.length;i++){ h = (h*31 + str.charCodeAt(i)) >>> 0; }
+  return h;
+}
+function renderQrGrid(seed){
+  const h = hashStr(seed);
+  let cells = "";
+  for(let i=0;i<121;i++){
+    const bit = (h >> (i % 30)) & 1;
+    const noise = (hashStr(seed + i) % 5 === 0) ? 1 - bit : bit;
+    cells += `<div class="qr-cell ${noise ? '' : 'on'}"></div>`;
+  }
+  return cells;
+}
+function genOrderId(){
+  const letters = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+  const l = letters[Math.floor(Math.random()*letters.length)];
+  const n = Math.floor(100 + Math.random()*900);
+  return l + n;
+}
+function genSecureToken(){
+  return Math.random().toString(36).slice(2) + Date.now().toString(36);
+}
+
+/* ---------- Locker visuals ---------- */
+function renderLockerPanel(zone, tray){
+  const hotCells = TRAYS.map(t=>{
+    const active = zone==='hot' && tray===t;
+    return `<div class="locker-cell ${active?'active hot':''}">${active ? '<span class="locker-cell-dot"></span>' : t}</div>`;
+  }).join('');
+  const coldCells = TRAYS.map(t=>{
+    const active = zone==='cold' && tray===t;
+    return `<div class="locker-cell ${active?'active cold':''}">${active ? '<span class="locker-cell-dot"></span>' : t}</div>`;
+  }).join('');
+  return `
+    <div class="locker-panel">
+      <div class="locker-panel-header">
+        <span class="locker-panel-title">BITE&amp;GO SMART LOCKER</span>
+        <span class="locker-online"><span class="pulse"></span>ONLINE</span>
+      </div>
+      <div class="locker-zone-label hot">🔥 HOT</div>
+      <div class="locker-grid">${hotCells}</div>
+      <div class="locker-zone-label cold">❄️ COLD</div>
+      <div class="locker-grid">${coldCells}</div>
+    </div>
+  `;
+}
+function renderLockerPicker(zone, tray){
+  const hotCells = TRAYS.map(t=>`<div class="locker-cell active-pick ${zone==='hot'&&tray===t?'active hot':''}" style="cursor:pointer;color:var(--ink-soft)" onclick="setStaffTray('hot',${t})">${t}</div>`).join('');
+  const coldCells = TRAYS.map(t=>`<div class="locker-cell active-pick ${zone==='cold'&&tray===t?'active cold':''}" style="cursor:pointer;color:var(--ink-soft)" onclick="setStaffTray('cold',${t})">${t}</div>`).join('');
+  return `
+    <div class="locker-panel">
+      <div class="locker-panel-header">
+        <span class="locker-panel-title">ВЫБЕРИТЕ ЛОТОК</span>
+      </div>
+      <div class="locker-zone-label hot">🔥 HOT</div>
+      <div class="locker-grid">${hotCells}</div>
+      <div class="locker-zone-label cold">❄️ COLD</div>
+      <div class="locker-grid">${coldCells}</div>
+    </div>
+  `;
+}
+function setStaffTray(zone, tray){
+  state.staffZone = zone;
+  state.staffTray = tray;
+  render();
+}
+
+/* ---------- Formatting ---------- */
+function fmt(n){ return n.toLocaleString('ru-RU') + " ₸"; }
+function cartCount(){ return Object.values(state.cart).reduce((a,b)=>a+b,0); }
+function cartTotal(){
+  return Object.entries(state.cart).reduce((sum,[id,qty])=>{
+    const item = MENU.find(m=>m.id===id);
+    return sum + (item ? item.price*qty : 0);
+  },0);
+}
+function formatRemaining(readyAt){
+  const diff = readyAt - Date.now();
+  if(diff <= 0) return "должно быть готово с минуты на минуту";
+  const mins = Math.floor(diff/60000);
+  const secs = Math.floor((diff%60000)/1000);
+  if(mins > 0) return `осталось ~${mins} мин`;
+  return `осталось ${secs} сек`;
+}
+function tickCountdowns(){
+  document.querySelectorAll('[data-ready-at]').forEach(el=>{
+    const readyAt = parseInt(el.getAttribute('data-ready-at'),10);
+    el.textContent = formatRemaining(readyAt);
+  });
+}
+setInterval(tickCountdowns, 1000);
+
+/* ---------- Top-level render ---------- */
+function render(){
+  const app = document.getElementById('app');
+  const isStudent = state.role === 'student';
+
+  let topbarHtml = '';
+  if(isStudent){
+    topbarHtml = `
+      <div class="topbar">
+        <div class="topbar-row">
+          <p class="brand">Bite<span class="go">&amp;Go</span></p>
+          <button class="icon-btn" onclick="toggleMenu()">☰</button>
+        </div>
+      </div>
+      ${state.menuOpen ? `
+        <div class="dropdown-menu">
+          <button onclick="switchToStaffLogin()">👤 Вход для сотрудников</button>
+        </div>
+      ` : ''}
+    `;
+  } else {
+    topbarHtml = `
+      <div class="topbar">
+        <div class="topbar-row">
+          <p class="brand">Bite<span class="go">&amp;Go</span><span class="staff-tag">точка</span></p>
+          <button class="icon-btn" onclick="switchToStudent()">✕</button>
+        </div>
+      </div>
+    `;
+  }
+
+  app.innerHTML = `
+    ${serverOffline ? `<div class="storage-warning">⚠️ Нет связи с сервером. Убедитесь, что запущен <code>node server.js</code>, и откройте страницу по адресу из терминала.</div>` : ''}
+    ${topbarHtml}
+    <div class="screen" id="screen"></div>
+    ${isStudent ? renderBottomNav() : ''}
+  `;
+
+  const screen = document.getElementById('screen');
+  if(isStudent){
+    if(state.tab === 'order') renderOrderTab(screen);
+    else if(state.tab === 'tickets') renderTicketsTab(screen);
+    else renderMoreTab(screen);
+  } else {
+    renderStaff(screen);
+  }
+}
+
+function toggleMenu(){ state.menuOpen = !state.menuOpen; render(); }
+function switchToStaffLogin(){ state.role = 'staff'; state.menuOpen = false; render(); }
+function switchToStudent(){ state.role = 'student'; state.staffSelectedOrder = null; render(); }
+
+function renderBottomNav(){
+  const hasActiveOrder = state.currentOrder && state.currentOrder.status !== 'delivered';
+  return `
+    <div class="bottom-nav">
+      <button class="${state.tab==='order'?'active':''}" onclick="setTab('order')">
+        <span class="nav-icon">🏠</span>Главная
+      </button>
+      <button class="${state.tab==='tickets'?'active':''}" onclick="setTab('tickets')">
+        <span class="nav-icon">📦</span>Заказы
+        ${hasActiveOrder ? '<span class="nav-dot"></span>' : ''}
+      </button>
+      <button class="${state.tab==='more'?'active':''}" onclick="setTab('more')">
+        <span class="nav-icon">👤</span>Ещё
+      </button>
+    </div>
+  `;
+}
+function setTab(tab){ state.tab = tab; state.menuOpen = false; render(); }
+
+/* ================= ORDER TAB (student wizard) ================= */
+function renderOrderTab(el){
+  if(state.step === 'menu') return renderMenuStep(el);
+  if(state.step === 'slot') return renderSlotStep(el);
+  if(state.step === 'review') return renderReviewStep(el);
+  if(state.step === 'paying') return renderPayingStep(el);
+}
+
+function renderMenuStep(el){
+  el.innerHTML = `
+    <div class="hero">
+      <h1>Закажи сейчас.<br>Забери на перемене. ⚡</h1>
+      <div class="hero-chips">
+        <span class="hero-chip">📍
+          <select class="location-pill-select" onchange="state.location=this.value">
+            ${LOCATIONS.map(l=>`<option value="${l}" ${l===state.location?'selected':''}>${l}</option>`).join('')}
+          </select>
+        </span>
+        <span class="hero-chip">🕒 Ближайшая перемена ${SLOTS[0].time}</span>
+      </div>
+    </div>
+    <h2 class="section-title">Что возьмём?</h2>
+    <div class="menu-grid">
+      ${MENU.map(item=>{
+        const qty = state.cart[item.id] || 0;
+        return `
+        <div class="menu-card">
+          <div class="menu-card-photo">
+            <img src="" alt="${item.name}" onerror="this.style.display='none'">
+            <div class="menu-card-photo-fallback">ФОТО</div>
+          </div>
+          <div class="menu-card-body">
+            <div>
+              <p class="menu-card-name">${item.name}</p>
+              <p class="menu-card-desc">${item.desc}</p>
+              <p class="menu-card-price">${fmt(item.price)}</p>
+            </div>
+            <div class="qty-control">
+              ${qty>0 ? `<button class="qty-btn" onclick="changeQty('${item.id}',-1)">–</button><span class="qty-num">${qty}</span>` : ''}
+              <button class="qty-btn add" onclick="changeQty('${item.id}',1)">+</button>
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="cart-bar ${cartCount()===0?'hidden':''}" onclick="state.step='slot';render()">
+      <span class="cart-bar-left">${cartCount()} товар(а) в корзине</span>
+      <span class="cart-bar-right">${fmt(cartTotal())} →</span>
+    </div>
+    <div class="nav-spacer"></div>
+  `;
+}
+function changeQty(id, delta){
+  const cur = state.cart[id] || 0;
+  const next = Math.max(0, cur + delta);
+  if(next === 0) delete state.cart[id];
+  else state.cart[id] = next;
+  render();
+}
+
+function renderSlotStep(el){
+  el.innerHTML = `
+    <button class="back-link" onclick="state.step='menu';render()">← Назад</button>
+    <h2 class="section-title">Когда заберёте?</h2>
+    <div class="slot-list">
+      ${SLOTS.map(s=>`
+        <div class="slot-pill ${state.slot===s.id?'selected':''}" onclick="state.slot='${s.id}';render()">
+          <div>
+            <p class="slot-time">${s.time}</p>
+            <p class="slot-note">Ближайшая перемена</p>
+          </div>
+          <div class="radio-dot"></div>
+        </div>
+      `).join('')}
+    </div>
+    <button class="btn-primary" ${!state.slot?'disabled':''} onclick="state.step='review';render()">Продолжить</button>
+    <div class="nav-spacer"></div>
+  `;
+}
+
+function renderReviewStep(el){
+  const slot = SLOTS.find(s=>s.id===state.slot);
+  el.innerHTML = `
+    <button class="back-link" onclick="state.step='slot';render()">← Назад</button>
+    <h2 class="section-title">Ваш заказ</h2>
+    <div style="margin-bottom:18px;">
+      ${Object.entries(state.cart).map(([id,qty])=>{
+        const item = MENU.find(m=>m.id===id);
+        return `<div class="review-row"><span>${item.name} × ${qty}</span><span>${fmt(item.price*qty)}</span></div>`;
+      }).join('')}
+      <div class="review-row total"><span>Итого</span><span>${fmt(cartTotal())}</span></div>
+    </div>
+    <p class="field-label">Заберёте</p>
+    <p style="font-size:14px;margin:0 0 20px;font-weight:600;">${slot.time} · ${state.location}</p>
+    <button class="btn-primary" onclick="startPayment()">Оплатить ${fmt(cartTotal())}</button>
+    <div class="nav-spacer"></div>
+  `;
+}
+
+function startPayment(){
+  state.step = 'paying';
+  render();
+  setTimeout(()=>{ confirmOrder(); }, 1600);
+}
+function renderPayingStep(el){
+  el.innerHTML = `
+    <div class="center-screen">
+      <div class="spinner"></div>
+      <p style="font-weight:600;margin:0 0 6px;">Ожидаем оплату</p>
+      <p style="font-size:13px;color:var(--ink-soft);max-width:260px;">Заказ появится в Locker сразу после подтверждения</p>
+    </div>
+  `;
+}
+
+async function confirmOrder(){
+  const slot = SLOTS.find(s=>s.id===state.slot);
+  const payload = {
+    items: Object.entries(state.cart).map(([id,qty])=>{
+      const item = MENU.find(m=>m.id===id);
+      return {name:item.name, qty, price:item.price};
+    }),
+    total: cartTotal(),
+    location: state.location,
+    slotTime: slot.time,
+  };
+
+  try{
+    const order = await api.createOrder(payload);
+    state.currentOrder = order;
+    state.cart = {};
+    state.slot = null;
+    state.step = 'menu';
+    state.tab = 'tickets';
+    render();
+    showToast(`Сохранено ✓ #${order.id} · «${order.location}»`, 4000);
+  }catch(e){
+    state.step = 'review';
+    render();
+    showToast(`⚠️ Заказ не сохранился: ${e.message}`, 5000);
+  }
+}
+
+/* ================= TICKETS TAB ================= */
+function renderTicketsTab(el){
+  if(!state.currentOrder){
+    el.innerHTML = `
+      <div class="empty-state">
+        <p class="big">Пока нет заказов</p>
+        <p>Оформите заказ — он появится здесь с QR и статусом Locker</p>
+      </div>
+      <button class="btn-primary" onclick="setTab('order')">Заказать</button>
+      <div class="nav-spacer"></div>
+    `;
+    return;
+  }
+
+  const o = state.currentOrder;
+
+  if(o.status === 'ready' && state.lockerOpening){
+    el.innerHTML = `
+      <div class="locker-panel-center" style="background:var(--ink);border-radius:18px;">
+        <div class="unlock-emoji">🔓</div>
+        <p class="unlock-title">Открываем дверцу…</p>
+        <p class="unlock-sub">Заказ #${o.id}</p>
+      </div>
+      <div class="nav-spacer"></div>
+    `;
+    return;
+  }
+
+  if(o.status === 'ready'){
+    el.innerHTML = `
+      <div class="locker-moment">
+        <div class="box-icon">📦</div>
+        <p class="locker-wordmark">BITE&amp;GO LOCKER</p>
+        <p class="locker-headline">ЗАКАЗ ГОТОВ</p>
+        <p class="locker-code">#${o.id}</p>
+      </div>
+      ${renderLockerPanel(o.zone, o.tray)}
+      <p style="text-align:center;font-size:13px;color:var(--ink-soft);margin-bottom:0;">Поднесите телефон к Locker</p>
+      <div class="qr-wrap"><div class="qr-grid" id="qr-live">${renderQrGrid(o.token)}</div></div>
+      <button class="btn-primary" onclick="startLockerOpen('${o.id}')">Открыть Locker</button>
+      <button class="btn-text" onclick="state.showStaffFallbackQr=!state.showStaffFallbackQr;render()">Не открывается? Показать код сотруднику</button>
+      ${state.showStaffFallbackQr ? `<p style="text-align:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;margin-top:10px;">#${o.id}</p>` : ''}
+      <div class="ticket-items">
+        ${o.items.map(it=>`<div class="ticket-item-row"><span>${it.name} × ${it.qty}</span><span>${fmt(it.price*it.qty)}</span></div>`).join('')}
+      </div>
+      <div class="nav-spacer"></div>
+    `;
+    return;
+  }
+
+  if(o.status === 'delivered'){
+    el.innerHTML = `
+      <div class="locker-panel-center" style="background:var(--ink);border-radius:18px;margin-bottom:16px;">
+        <div class="unlock-emoji">✅</div>
+        <p class="unlock-title">Заказ получен</p>
+        <p class="unlock-sub">Спасибо, что выбрали Bite&amp;Go</p>
+      </div>
+      <div class="ticket-items" style="margin-bottom:18px;">
+        ${o.items.map(it=>`<div class="ticket-item-row"><span>${it.name} × ${it.qty}</span><span>${fmt(it.price*it.qty)}</span></div>`).join('')}
+      </div>
+      <button class="btn-primary" onclick="resetStudentFlow()">Оформить новый заказ</button>
+      <div class="nav-spacer"></div>
+    `;
+    return;
+  }
+
+  // paid or accepted
+  const meta = STATUS_META[o.status];
+  el.innerHTML = `
+    <div class="status-card">
+      <div class="status-line"><span class="dot" style="background:${meta.dot}"></span>${meta.label}</div>
+      <p class="status-order-id">Заказ #${o.id} · ${o.slotTime} · ${o.location}</p>
+      ${o.status === 'accepted' ? `
+        <div class="prep-banner">
+          <span>👨‍🍳 Готовится</span>
+          <span data-ready-at="${o.readyAt}">${formatRemaining(o.readyAt)}</span>
+        </div>
+      ` : `
+        <div class="prep-banner"><span>⏳ Ждём, когда точка примет заказ</span></div>
+      `}
+      <div class="ticket-items">
+        ${o.items.map(it=>`<div class="ticket-item-row"><span>${it.name} × ${it.qty}</span><span>${fmt(it.price*it.qty)}</span></div>`).join('')}
+      </div>
+    </div>
+    <div class="nav-spacer"></div>
+  `;
+}
+
+function startLockerOpen(id){
+  state.lockerOpening = true;
+  render();
+  setTimeout(async ()=>{
+    try{
+      const order = await api.deliverOrder(id, 'Студент (самообслуживание Locker)');
+      state.currentOrder = order;
+    }catch(e){
+      showToast(`⚠️ Не удалось открыть Locker: ${e.message}`, 4000);
+    }
+    state.lockerOpening = false;
+    render();
+  }, 1800);
+}
+
+function resetStudentFlow(){
+  state.currentOrder = null;
+  state.showStaffFallbackQr = false;
+  state.tab = 'order';
+  state.step = 'menu';
+  render();
+}
+
+/* ================= MORE TAB ================= */
+function renderMoreTab(el){
+  el.innerHTML = `
+    <h2 class="section-title">Bite&amp;Go</h2>
+    <div class="more-card">
+      <h3>Как это работает</h3>
+      <p>Заказал → оплатил → пришёл на перемене → открыл Locker телефоном → забрал. Без очереди и без регистрации.</p>
+    </div>
+    <div class="more-card">
+      <h3>Locker</h3>
+      <p>Ваш заказ хранится в отдельном изолированном лотке — горячая или холодная зона — и выдаётся только вам.</p>
+    </div>
+    <div class="more-card">
+      <h3>Для персонала точки</h3>
+      <p style="margin-bottom:12px;">Принимаете и загружаете заказы в Locker через отдельную панель сотрудника.</p>
+      <button class="btn-secondary" style="margin-top:0;" onclick="switchToStaffLogin()">Вход для сотрудников →</button>
+    </div>
+    <div class="nav-spacer"></div>
+  `;
+}
+
+/* ================= STAFF ================= */
+function renderStaff(el){
+  if(!state.staffAuthLocation) return renderStaffLogin(el);
+  if(state.staffSelectedOrder) return renderStaffFulfil(el);
+  renderStaffDashboard(el);
+}
+
+function renderStaffLogin(el){
+  el.innerHTML = `
+    <div style="padding-top:16px;">
+      <h2 class="section-title">Вход для сотрудников</h2>
+      <p class="field-label">Ваш персональный код</p>
+      <input type="text" inputmode="text" maxlength="8" placeholder="8 символов"
+        class="text-input" style="letter-spacing:3px;font-weight:700;text-transform:uppercase;"
+        value="${state.staffPinInput}"
+        oninput="state.staffPinInput=this.value.toUpperCase()">
+      <button class="btn-primary" onclick="staffLogin()">Войти</button>
+      <p style="font-size:12px;color:var(--ink-soft);margin-top:14px;">
+        Код выдаёт администратор точки каждому сотруднику лично. Для демо (см. config.js на сервере): Алия — AL7K2XQ9, Данияр — DN4P8WZ1, Ерлан — ER3M6TC5, Жанна — ZH9L2VB7, Санжар — SJ5Q1KX8, Айгерим — AG8R4NP2, Тимур — TM2C7YQ4, Дина — DN6X3LK9.
+      </p>
+    </div>
+  `;
+}
+async function staffLogin(){
+  const code = state.staffPinInput.trim().toUpperCase();
+  try{
+    const account = await api.staffLogin(code);
+    state.staffAuthLocation = account.location;
+    state.staffAuthName = account.name;
+    state.staffPinInput = "";
+    showToast(`Добро пожаловать, ${account.name} · ${account.location}`);
+    render();
+  }catch(e){
+    showToast(e.message === 'Нет связи с сервером' ? e.message : "Код не найден");
+  }
+}
+function staffLogout(){
+  state.staffAuthLocation = null;
+  state.staffAuthName = null;
+  state.staffSelectedOrder = null;
+  state.staffPinInput = "";
+  render();
+}
+
+async function renderStaffDashboard(el){
+  el.innerHTML = `<p style="text-align:center;color:var(--ink-soft);font-size:13px;padding-top:30px;">Загрузка заказов…</p>`;
+  let orders = [], totalAllLocations = null;
+  try{
+    orders = await api.listOrders(state.staffAuthLocation);
+    try{ totalAllLocations = (await api.listOrders()).length; }catch(_){ /* debug line only, non-critical */ }
+  }catch(e){
+    el.innerHTML = `<div class="empty-state"><p class="big">Не удалось загрузить заказы</p><p>${e.message}</p></div>`;
+    return;
+  }
+
+  const newOrders = orders.filter(o=>o.status==='paid').sort((a,b)=>a.createdAt-b.createdAt);
+  const inProgress = orders.filter(o=>o.status==='accepted').sort((a,b)=>a.readyAt-b.readyAt);
+  const ready = orders.filter(o=>o.status==='ready').sort((a,b)=>a.createdAt-b.createdAt);
+
+  const f = state.staffFilter;
+  const showNew = f==='all' || f==='paid';
+  const showProgress = f==='all' || f==='accepted';
+  const showReady = f==='all' || f==='ready';
+
+  const card = (o, cls) => `
+    <div class="staff-order-card ${cls}" onclick="openStaffOrder('${o.id}')">
+      <div class="staff-order-top">
+        <span class="staff-order-id">#${o.id}</span>
+        <span class="staff-order-slot">${o.slotTime}</span>
+      </div>
+      <p class="staff-order-items">${o.items.map(i=>i.name+' × '+i.qty).join(', ')}</p>
+      <p class="staff-order-loc">${cls==='progress' ? '<span data-ready-at="'+o.readyAt+'">'+formatRemaining(o.readyAt)+'</span>' : (cls==='ready' ? 'ждёт студента' : 'нужно принять')}</p>
+    </div>
+  `;
+
+  el.innerHTML = `
+    <div class="staff-session-bar">
+      <span>👤 ${state.staffAuthName} · 📍 ${state.staffAuthLocation}</span>
+      <button onclick="staffLogout()">Выйти</button>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-box new ${f==='paid'?'active-filter':''}" onclick="setStaffFilter('paid')">
+        <span class="stat-num">${newOrders.length}</span>
+        <span class="stat-label">🔴 Новые</span>
+      </div>
+      <div class="stat-box progress ${f==='accepted'?'active-filter':''}" onclick="setStaffFilter('accepted')">
+        <span class="stat-num">${inProgress.length}</span>
+        <span class="stat-label">🟠 Готовятся</span>
+      </div>
+      <div class="stat-box ready ${f==='ready'?'active-filter':''}" onclick="setStaffFilter('ready')">
+        <span class="stat-num">${ready.length}</span>
+        <span class="stat-label">🟢 В Locker</span>
+      </div>
+    </div>
+    ${totalAllLocations !== null ? `
+      <p style="font-size:10.5px;color:var(--ink-soft);text-align:center;margin:-8px 0 16px;">
+        Всего заказов в базе (все точки) — ${totalAllLocations} · на «${state.staffAuthLocation}» — ${orders.length}
+      </p>
+    ` : ''}
+
+    <div class="scan-input-wrap">
+      <input type="text" placeholder="Код заказа, например A247" value="${state.scanInput}" oninput="state.scanInput=this.value.toUpperCase()">
+      <button class="btn-primary" style="width:auto;padding:12px 16px;" onclick="scanByCode()">Найти</button>
+    </div>
+
+    ${showNew ? `<h2 class="section-title">Новые (${newOrders.length})</h2>${newOrders.map(o=>card(o,'new')).join('') || '<p style="font-size:13px;color:var(--ink-soft);margin-bottom:16px;">Пусто</p>'}` : ''}
+    ${showProgress ? `<h2 class="section-title">Готовятся (${inProgress.length})</h2>${inProgress.map(o=>card(o,'progress')).join('') || '<p style="font-size:13px;color:var(--ink-soft);margin-bottom:16px;">Пусто</p>'}` : ''}
+    ${showReady ? `<h2 class="section-title">В Locker (${ready.length})</h2>${ready.map(o=>card(o,'ready')).join('') || '<p style="font-size:13px;color:var(--ink-soft);margin-bottom:16px;">Пусто</p>'}` : ''}
+
+    ${(newOrders.length+inProgress.length+ready.length===0) ? `
+      <div class="empty-state"><p class="big">Пока пусто</p><p>Оплаченные заказы появятся здесь автоматически</p></div>
+      ${allOrders.length > 0 ? `
+        <p style="text-align:center;font-size:12px;color:var(--ink-soft);margin-top:-10px;">
+          Подсказка: всего заказов на всех точках сейчас — ${allOrders.length}, но ни один не на «${state.staffAuthLocation}».
+          Проверьте, ту ли точку выбрал студент при заказе.
+        </p>
+      ` : ''}
+    ` : ''}
+  `;
+}
+function setStaffFilter(f){
+  state.staffFilter = (state.staffFilter === f) ? 'all' : f;
+  render();
+}
+
+async function scanByCode(){
+  const code = state.scanInput.trim().toUpperCase();
+  try{
+    const order = await api.getOrder(code);
+    if(order.location !== state.staffAuthLocation){
+      showToast("Заказ не найден на этой точке");
+      return;
+    }
+    openStaffOrder(order.id);
+  }catch(e){
+    showToast("Заказ не найден");
+  }
+}
+function openStaffOrder(id){
+  state.staffSelectedOrder = id;
+  state.staffPrepMinutes = 10;
+  state.staffZone = "hot";
+  state.staffTray = 1;
+  render();
+}
+function backToStaffDashboard(){
+  state.staffSelectedOrder = null;
+  state.scanInput = "";
+  render();
+}
+
+async function renderStaffFulfil(el){
+  let o;
+  try{
+    o = await api.getOrder(state.staffSelectedOrder);
+    if(o.location !== state.staffAuthLocation) o = null;
+  }catch(e){ o = null; }
+  if(!o){
+    el.innerHTML = `<div class="empty-state"><p class="big">Заказ не найден</p></div>
+      <button class="btn-secondary" onclick="backToStaffDashboard()">← К списку</button>`;
+    return;
+  }
+
+  el.innerHTML = `
+    <button class="back-link" onclick="backToStaffDashboard()">← К списку</button>
+    <div class="fulfil-card">
+      <span class="fulfil-badge ${o.status}">${STATUS_META[o.status].label.toUpperCase()}</span>
+      <p class="status-order-id" style="font-size:22px;font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--ink);margin-bottom:4px;">#${o.id}</p>
+      <p style="font-size:13px;color:var(--ink-soft);margin-bottom:16px;">${o.slotTime} · ${o.location}</p>
+      <div class="ticket-items" style="margin-bottom:18px;">
+        ${o.items.map(it=>`<div class="ticket-item-row"><span>${it.name} × ${it.qty}</span><span>${fmt(it.price*it.qty)}</span></div>`).join('')}
+        <div class="review-row total"><span>Итого</span><span>${fmt(o.total)}</span></div>
+      </div>
+
+      ${o.status === 'paid' ? `
+        <p class="field-label">Будет готово через</p>
+        <div class="prep-time-row">
+          ${[5,10,15,20].map(m=>`<button class="prep-time-btn ${state.staffPrepMinutes===m?'selected':''}" onclick="state.staffPrepMinutes=${m};render()">${m} мин</button>`).join('')}
+        </div>
+        <button class="btn-primary" onclick="acceptOrder('${o.id}', state.staffPrepMinutes)">Принять заказ</button>
+      ` : ''}
+
+      ${o.status === 'accepted' ? `
+        <p style="font-size:14px;margin-bottom:14px;">👨‍🍳 Готовится · <strong data-ready-at="${o.readyAt}">${formatRemaining(o.readyAt)}</strong></p>
+        <p class="field-label">Куда загрузить</p>
+        ${renderLockerPicker(state.staffZone, state.staffTray)}
+        <button class="btn-primary" style="margin-top:14px;" onclick="loadIntoLocker('${o.id}', state.staffZone, state.staffTray)">Загрузить в Locker</button>
+      ` : ''}
+
+      ${o.status === 'ready' ? `
+        <p style="font-size:12px;color:var(--ink-soft);margin-bottom:12px;">Принял: ${o.acceptedBy || '—'} · Загрузил: ${o.loadedBy || '—'}</p>
+        ${renderLockerPanel(o.zone, o.tray)}
+        <p style="font-size:13px;color:var(--ink-soft);margin-bottom:14px;">Ожидаем, когда студент откроет Locker телефоном.</p>
+        <button class="btn-secondary" style="margin-top:0;" onclick="markDelivered('${o.id}')">Студент не может открыть — выдать вручную</button>
+      ` : ''}
+
+      ${o.status === 'delivered' ? `
+        <p style="font-size:13px;color:var(--ink-soft);">Этот код уже использован и не может быть принят повторно.<br>Выдал: ${o.deliveredBy || '—'}</p>
+      ` : ''}
+    </div>
+  `;
+}
+
+async function acceptOrder(id, minutes){
+  try{
+    await api.acceptOrder(id, minutes, state.staffAuthName);
+    showToast(`Принято · будет готово через ${minutes} мин`);
+    render();
+  }catch(e){
+    showToast(`⚠️ ${e.message}`, 3000);
+  }
+}
+async function loadIntoLocker(id, zone, tray){
+  try{
+    await api.loadIntoLocker(id, zone, tray, state.staffAuthName);
+    showToast(`Загружено · ${zone==='hot'?'🔥 горячая':'❄️ холодная'} · лоток ${tray}`);
+    render();
+  }catch(e){
+    showToast(`⚠️ ${e.message}`, 3000);
+  }
+}
+async function markDelivered(id){
+  try{
+    const order = await api.deliverOrder(id, state.staffAuthName + ' (вручную)');
+    if(order.status !== 'delivered'){ showToast("Уже выдан — второй раз получить нельзя"); return; }
+    showToast("Заказ выдан ✓");
+    render();
+  }catch(e){
+    showToast(`⚠️ ${e.message}`, 3000);
+  }
+}
+
+/* ---------- Cross-tab polling ---------- */
+setInterval(async ()=>{
+  const active = document.activeElement;
+  const typing = active && active.tagName === 'INPUT';
+
+  if(state.role === 'student' && state.tab === 'tickets' && state.currentOrder && !state.lockerOpening){
+    try{
+      const match = await api.getOrder(state.currentOrder.id);
+      const changed = match.status !== state.currentOrder.status;
+      state.currentOrder = match;
+      if(changed){ render(); return; }
+    }catch(e){ /* transient network hiccup — try again next tick */ }
+    const qrEl = document.getElementById('qr-live');
+    if(qrEl && state.currentOrder){
+      state.currentOrder.token = genSecureToken();
+      qrEl.innerHTML = renderQrGrid(state.currentOrder.token);
+    }
+  } else if(state.role === 'staff' && state.staffAuthLocation && !typing){
+    const screen = document.getElementById('screen');
+    if(screen){
+      if(state.staffSelectedOrder) renderStaffFulfil(screen);
+      else renderStaffDashboard(screen);
+    }
+  }
+}, 5000);
+
+/* ---------- Init ---------- */
+async function boot(){
+  document.getElementById('app').innerHTML = `
+    <div class="center-screen" style="padding-top:120px;">
+      <div class="spinner"></div>
+      <p style="font-weight:600;">Подключаемся к серверу…</p>
+    </div>
+  `;
+  try{
+    const cfg = await api.config();
+    LOCATIONS = cfg.locations;
+    MENU = cfg.menu;
+    SLOTS = cfg.slots;
+    state.location = LOCATIONS[0];
+  }catch(e){
+    // render() will show the "server offline" banner; leave arrays empty so
+    // the menu/location UI just renders blank until the server comes back.
+  }
+  render();
+}
+boot();
+</script>
+</body>
+</html>
